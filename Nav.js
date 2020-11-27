@@ -22,10 +22,16 @@ const AppStackNavigator = () => {
             }}>
             <Screen
                 name="MainPage"
-                component={MainPage}/>
+                component={MainPage}
+                options={{
+                    title: "Котировки валют",
+                }}/>
             <Screen
                 name="CurrencyPage"
-                component={CurrencyPage}/>
+                component={CurrencyPage}
+                options={{
+                    title: "Котировки валют",
+                }}/>
         </Navigator>
     );
 };
