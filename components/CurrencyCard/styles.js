@@ -5,6 +5,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "#fff",
 		padding: 16,
 		marginVertical: 20,
+		borderRadius: 2,
 
         // iOS shadow
         shadowColor: "#000",
@@ -32,11 +33,6 @@ const styles = StyleSheet.create({
 		alignItems: "flex-end",
 		justifyContent: "space-between",
 	},
-	topContainer: {
-		borderBottomWidth: 1,
-		borderColor: "#595959dd",
-		borderStyle: "solid",
-	},
 	textBig: {
 		color: "#000d",
 		fontSize: 20,
@@ -48,7 +44,13 @@ const styles = StyleSheet.create({
 	textSmall: {
 		color: "#595959dd",
 		fontSize: 14,
-	}
+	},
+	green: {
+		color: "#21a700"
+	},
+	red: {
+		color: "#e20000"
+	},
 });
 
 export default styles;

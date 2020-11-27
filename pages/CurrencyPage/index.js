@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useCallback     } from "react";
 import { View, FlatList, Text, ActivityIndicator } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { SetCurrencyList } from "../../redux/actions";
@@ -7,26 +7,70 @@ import OurTextButton from "../../components/OurTextButton";
 import useFetch from "../../networkHandler";
 import styles from "./styles";
 
+const SECONDS_IN_DAY = 86400;
+
+const formatDate = (date) => {
+    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+}
+const getDateObject = () => {
+    return new Date();
+}
+const getDate = () => {
+    const dateToday = getDateObject();
+    const dateTomorrow = getDateObject();
+    const dateYesterday = getDateObject();
+
+    // Да простят меня Боги кода
+    dateTomorrow.setDate(dateTomorrow.getDate() + 1);
+    dateYesterday.setDate(dateYesterday.getDate() - 1); 
+    const today = formatDate(dateToday);
+    const tomorrow = formatDate(dateTomorrow);
+    const yesterday = formatDate(dateYesterday);
+
+    return [today, tomorrow, yesterday];
+}
+
 const MainPage = (props) => {
     const state = useSelector(state=>state);
     const dispatch = useDispatch();
 
-    const onSuccessFetch = (data) => {
-        dispatch(SetCurrencyList(Object.entries(data.rates), data.date));
-    };
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const [
-        data,
-        loading,
-        error,
-        fetchData,
-        abortController
-    ] = useFetch("https://api.exchangeratesapi.io/latest?base=RUB", {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    }, undefined, undefined, onSuccessFetch);
+    const [today, tomorrow, yesterday] = getDate();
+
+    const onSuccessFetch = (data) => {
+        dispatch(SetCurrencyList(data.rates, data.date));
+    };
+    const fetchData = useCallback(async () => {
+        setLoading(true);
+        setError(false);
+
+        try {
+            const response = await fetch(`https://api.exchangeratesapi.io/history?start_at=${yesterday}&end_at=${tomorrow}&base=RUB`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            let data;
+            try {
+                data = await response.json();
+            } catch(err) {
+                setError(err);
+            }
+            onSuccessFetch(data);
+            setLoading(false);
+        } catch(Error) {
+            setError(Error);
+        }
+    });
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
     return (
         <View style={styles.mainContainer}>
             {
@@ -34,14 +78,19 @@ const MainPage = (props) => {
                     <View style={styles.currencyListContainer}>
                         <FlatList   style={styles.currencyListContainer}
                                     contentContainerStyle={styles.flatlistContainer}
-                                    data={state.currencyData}
-                                    renderItem={({item, index}) => <CurrencyCard currency={item} /> }
+                                    data={Object.entries(state.currencyData[yesterday])}
+                                    renderItem={({item, index}) => <CurrencyCard currency={item[0]} rateToday={item[1]} rateTomorrow={state.currencyData[tomorrow][item[0]]} rateYesterday={state.currencyData[yesterday][item[0]]} /> }
                                     keyExtractor={(item, index)=>index} />
                     </View>
                 :
-                    <View style={styles.loading}>
-                        <ActivityIndicator color={"#595959dd"} size={"large"}/>
-                    </View>
+                    loading && !error ?
+                        <View style={styles.loading}>
+                            <ActivityIndicator color={"#595959dd"} size={"large"}/>
+                        </View>
+                    :
+                        <View style={styles.loading}>
+                            <Text style={styles.errorText}>Произошла ошибка при получении данных с сервера.</Text>
+                        </View>
             }
             <View style={styles.bottomContainer}>
                 <OurTextButton  style={styles.updateButton}
