@@ -1,0 +1,1 @@
+export const ACTION_TYPE_SET_CURRENCY_LIST = 0;
