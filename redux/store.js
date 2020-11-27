@@ -3,6 +3,7 @@ import reducer from "./reducer";
 
 const initialState = {
     currencyData: [],
+    updatedAt: "",
 };
 const store = createStore(reducer, initialState);
 
