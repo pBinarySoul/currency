@@ -7,6 +7,9 @@ const reducer = (state, action) => {
             const [data, date] = [action.data, action.date];
 
             if ( data ) {
+                try {
+                    delete data[date].RUB; // Удаляем рубль, чтобы он не появлялся в списке
+                } catch {}
                 newState.currencyData = data;
                 newState.updatedAt = date;
             }

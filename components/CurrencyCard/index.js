@@ -20,14 +20,14 @@ const CurrencyCard = (props) => {
 					<Text style={styles.textMedium}>ЦБ на сегодня</Text>
 					<View style={styles.currencyContainer}>
 						<Text style={styles.textBig}>{ costToday.toFixed(2) }</Text>
-						<Text style={[styles.textSmall, (costYesterday - costToday) >= 0 ? styles.green : styles.red]}>{ (costToday - costYesterday).toFixed(4) }</Text>
+						<Text style={[styles.textSmall, (costYesterday - costToday) > 0 ? styles.green : styles.red]}>{ (costToday - costYesterday).toFixed(4) }</Text>
 					</View>
 				</View>
 				<View style={styles.rightContainer}>
 					<Text style={styles.textMedium}>ЦБ на завтра</Text>
 					<View style={styles.currencyContainer}>
 						<Text style={styles.textBig}>{ (costTomorrow).toFixed(2) }</Text>
-						<Text style={[styles.textSmall, (costToday - costTomorrow) >= 0 ? styles.green : styles.red]}>{ (costTomorrow - costToday).toFixed(4) }</Text>
+						<Text style={[styles.textSmall, (costToday - costTomorrow) > 0 ? styles.green : styles.red]}>{ (costTomorrow - costToday).toFixed(4) }</Text>
 					</View>
 				</View>
 			</View>

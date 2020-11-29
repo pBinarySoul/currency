@@ -12,20 +12,15 @@ const SECONDS_IN_DAY = 86400;
 const formatDate = (date) => {
     return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
 }
-const getDateObject = () => {
-    return new Date();
-}
 const getDate = () => {
-    const dateToday = getDateObject();
-    const dateTomorrow = getDateObject();
-    const dateYesterday = getDateObject();
+    const date = new Date();
+    const today = formatDate(date);
 
     // Да простят меня Боги кода
-    dateTomorrow.setDate(dateTomorrow.getDate() + 1);
-    dateYesterday.setDate(dateYesterday.getDate() - 1); 
-    const today = formatDate(dateToday);
-    const tomorrow = formatDate(dateTomorrow);
-    const yesterday = formatDate(dateYesterday);
+    date.setDate(date.getDate() + 1);
+    const tomorrow = formatDate(date);
+    date.setDate(date.getDate() - 2); 
+    const yesterday = formatDate(date);
 
     return [today, tomorrow, yesterday];
 }
@@ -40,7 +35,7 @@ const MainPage = (props) => {
     const [today, tomorrow, yesterday] = getDate();
 
     const onSuccessFetch = (data) => {
-        dispatch(SetCurrencyList(data.rates, data.date));
+        dispatch(SetCurrencyList(data.rates, today));
     };
     const fetchData = useCallback(async () => {
         setLoading(true);
@@ -78,9 +73,9 @@ const MainPage = (props) => {
                     <View style={styles.currencyListContainer}>
                         <FlatList   style={styles.currencyListContainer}
                                     contentContainerStyle={styles.flatlistContainer}
-                                    data={Object.entries(state.currencyData[yesterday])}
+                                    data={Object.entries(state.currencyData[today] || {})}
                                     renderItem={({item, index}) => <CurrencyCard currency={item[0]} rateToday={item[1]} rateTomorrow={state.currencyData[tomorrow][item[0]]} rateYesterday={state.currencyData[yesterday][item[0]]} /> }
-                                    keyExtractor={(item, index)=>index} />
+                                    keyExtractor={(item, index)=> String(index)} />
                     </View>
                 :
                     loading && !error ?
