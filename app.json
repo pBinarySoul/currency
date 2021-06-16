@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ctrlweb-currency",
-    "slug": "ctrlweb-currency",
+    "name": "currency",
+    "slug": "currency",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
